@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tatvasoftpracticalassessment.R
 import com.example.tatvasoftpracticalassessment.models.Users
+import com.example.tatvasoftpracticalassessment.spacesItemDecoration.SpacesItemDecoration
 import com.example.tatvasoftpracticalassessment.viewholder.UserDataViewHolder
 import kotlinx.android.synthetic.main.usersdatalistitem.view.*
 
@@ -102,6 +103,7 @@ class UserDataRecyclerAdapter(private val context: Context, private val userData
                 itemView.userDataImagesRecyclerView.layoutManager = GridLayoutManager(context, 2)
                 mUserImagesAdapter = UserImagesAdapter(context, mUserDataImages)
                 itemView.userDataImagesRecyclerView.adapter = mUserImagesAdapter
+                itemView.userDataImagesRecyclerView.addItemDecoration(SpacesItemDecoration(10))
                 mUserImagesAdapter!!.notifyDataSetChanged()
             }else{
                 itemView.userDataImageItem.visibility = View.VISIBLE
@@ -113,6 +115,7 @@ class UserDataRecyclerAdapter(private val context: Context, private val userData
                 itemView.userDataImagesRecyclerView.layoutManager = GridLayoutManager(context, 2)
                 mUserImagesAdapter = UserImagesAdapter(context, mUserDataImages)
                 itemView.userDataImagesRecyclerView.adapter = mUserImagesAdapter
+                itemView.userDataImagesRecyclerView.addItemDecoration(SpacesItemDecoration(10))
                 mUserImagesAdapter!!.notifyDataSetChanged()
             }
         }

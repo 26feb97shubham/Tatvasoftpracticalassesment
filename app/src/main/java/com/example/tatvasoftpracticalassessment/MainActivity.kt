@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                 Toast.makeText(this@MainActivity, "No Response", Toast.LENGTH_LONG).show()
             }
         }
-
     }
 
     private fun setAdapter(userDataList: ArrayList<Users>) {
@@ -68,11 +67,13 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         if(currentPage!= PAGE_START){
             userDataRecyclerAdapter!!.removeLoading()
         }
-        userDataRecyclerAdapter!!.addItems(userDataList)
+      /*  userDataRecyclerAdapter!!.addItems(userDataList)
         swipeRefresh.isRefreshing = false
-
-        if (currentPage<userDataList.size){
-            userDataRecyclerAdapter!!.addLoading()
+*/
+        if (currentPage==userDataList.size){
+//            userDataRecyclerAdapter!!.addLoading()
+            swipeRefresh.isRefreshing=true
+            doAPICall()
         }else{
             mIsLastPage = true
         }
