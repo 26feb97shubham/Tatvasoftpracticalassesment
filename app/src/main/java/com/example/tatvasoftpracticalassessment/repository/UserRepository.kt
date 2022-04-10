@@ -14,12 +14,34 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class UserRepository {
-    private val BOOK_SEARCH_SERVICE_BASE_URL = "http://sd2-hiring.herokuapp.com/"
-
     private var userDataService: UserDataService? = null
     private var userDataResponseLiveData: MutableLiveData<UserDataResponse?>? = null
+    fun userVolumes(offset:Int?, limit:Int?) {
+        userDataService!!.doGetUserList(offset, limit)!!.enqueue(object : Callback<UserDataResponse?> {
+            override fun onResponse(
+                call: Call<UserDataResponse?>?,
+                response: Response<UserDataResponse?>
+            ) {
+                if (response.body() != null) {
+                    userDataResponseLiveData!!.postValue(response.body())
+                }
+            }
 
-    public fun userRepository() {
+            override fun onFailure(call: Call<UserDataResponse?>?, t: Throwable?) {
+                userDataResponseLiveData!!.postValue(null)
+            }
+        })
+    }
+
+    fun getVolumesResponseLiveData(): LiveData<UserDataResponse?>? {
+        return userDataResponseLiveData
+    }
+
+    companion object {
+        private const val BOOK_SEARCH_SERVICE_BASE_URL = "http://sd2-hiring.herokuapp.com/"
+    }
+
+    init {
         userDataResponseLiveData = MutableLiveData<UserDataResponse?>()
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -31,26 +53,4 @@ class UserRepository {
             .build()
             .create(UserDataService::class.java)
     }
-
-    public fun userVolumes(offset:Int?, limit:Int?) {
-        userDataService!!.doGetUserList(offset, limit)!!.enqueue(object : Callback<UserDataResponse?> {
-                override fun onResponse(
-                    call: Call<UserDataResponse?>?,
-                    response: Response<UserDataResponse?>
-                ) {
-                    if (response.body() != null) {
-                        userDataResponseLiveData!!.postValue(response.body())
-                    }
-                }
-
-                override fun onFailure(call: Call<UserDataResponse?>?, t: Throwable?) {
-                    userDataResponseLiveData!!.postValue(null)
-                }
-            })
-    }
-
-    public fun getVolumesResponseLiveData(): LiveData<UserDataResponse?>? {
-        return userDataResponseLiveData
-    }
-
 }

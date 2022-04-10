@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tatvasoftpracticalassessment.R
@@ -83,6 +84,7 @@ class UserDataRecyclerAdapter(private val context: Context, private val userData
             super.onBind(position)
             val item: Users = mUsersDataItemsList!![position]
             Glide.with(context).load(item.image).into(itemView!!.userImage)
+            itemView.userName.text = item.name
             if (item.items.size==0){
                 itemView.userDataImageItem.visibility = View.GONE
                 itemView.userDataImagesRecyclerView.visibility = View.GONE
@@ -90,10 +92,28 @@ class UserDataRecyclerAdapter(private val context: Context, private val userData
                 itemView.userDataImageItem.visibility = View.VISIBLE
                 itemView.userDataImagesRecyclerView.visibility = View.GONE
                 Glide.with(context).load(item.items[0]).into(itemView.userDataImageItem)
+            }else if (item.items!!.size%2==0){
+                itemView.userDataImageItem.visibility = View.GONE
+                itemView.userDataImagesRecyclerView.visibility = View.VISIBLE
+//                Glide.with(context).load(item.items[0]).into(itemView.userDataImageItem)
+                for (i in 0 until item!!.items.size){
+                    mUserDataImages.add(item.items[i])
+                }
+                itemView.userDataImagesRecyclerView.layoutManager = GridLayoutManager(context, 2)
+                mUserImagesAdapter = UserImagesAdapter(context, mUserDataImages)
+                itemView.userDataImagesRecyclerView.adapter = mUserImagesAdapter
+                mUserImagesAdapter!!.notifyDataSetChanged()
             }else{
+                itemView.userDataImageItem.visibility = View.VISIBLE
+                itemView.userDataImagesRecyclerView.visibility = View.VISIBLE
+                Glide.with(context).load(item.items[0]).into(itemView.userDataImageItem)
                 for (i in 1 until item!!.items.size){
                     mUserDataImages.add(item.items[i])
                 }
+                itemView.userDataImagesRecyclerView.layoutManager = GridLayoutManager(context, 2)
+                mUserImagesAdapter = UserImagesAdapter(context, mUserDataImages)
+                itemView.userDataImagesRecyclerView.adapter = mUserImagesAdapter
+                mUserImagesAdapter!!.notifyDataSetChanged()
             }
         }
     }

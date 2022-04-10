@@ -32,14 +32,52 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         swipeRefresh.setOnRefreshListener(this)
         recyclerViewUsersData.setHasFixedSize(true)
 
-
-        mLayoutManager = LinearLayoutManager(this)
-        recyclerViewUsersData.layoutManager = mLayoutManager
-
-        userViewModel = ViewModelProviders.of(this)[UserViewModel::class.java]
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
         userViewModel!!.init()
         doAPICall()
 
+    }
+
+    private fun doAPICall() {
+        userViewModel!!.userVolumes(10,10)
+        userViewModel!!.getVolumesResponseLiveData()!!.observe(this
+        ) { userDataResponse ->
+            if (userDataResponse != null) {
+                if (userDataResponse.status!!) {
+                    if (userDataResponse.data != null) {
+                        usersList.clear()
+                        usersList = userDataResponse.data!!.users
+                        setAdapter(usersList)
+                    } else {
+                        Toast.makeText(this@MainActivity, "No Data Found", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(this@MainActivity, "No Data Found", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(this@MainActivity, "No Response", Toast.LENGTH_LONG).show()
+            }
+        }
+
+    }
+
+    private fun setAdapter(userDataList: ArrayList<Users>) {
+        mLayoutManager = LinearLayoutManager(this)
+        recyclerViewUsersData.layoutManager = mLayoutManager
+        userDataRecyclerAdapter = UserDataRecyclerAdapter(this, userDataList)
+        if(currentPage!= PAGE_START){
+            userDataRecyclerAdapter!!.removeLoading()
+        }
+        userDataRecyclerAdapter!!.addItems(userDataList)
+        swipeRefresh.isRefreshing = false
+
+        if (currentPage<userDataList.size){
+            userDataRecyclerAdapter!!.addLoading()
+        }else{
+            mIsLastPage = true
+        }
+        mIsLoading = false
+        recyclerViewUsersData.adapter = userDataRecyclerAdapter
         /**
          * add scroll listener while user reach in bottom load more will call
          */
@@ -56,49 +94,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                 get() = mIsLoading
 
         })
-
-    }
-
-    private fun doAPICall() {
-        userViewModel!!.getVolumesResponseLiveData()!!.observe(this, object : Observer<UserDataResponse?>{
-            override fun onChanged(userDataResponse: UserDataResponse?) {
-                if (userDataResponse!=null){
-                    if (userDataResponse.status!!)
-                    {
-                        if (userDataResponse.data!=null)
-                        {
-                            usersList = userDataResponse.data!!.users
-                            setAdapter(usersList)
-                        }else{
-                            Toast.makeText(this@MainActivity, "No Data Found", Toast.LENGTH_LONG).show()
-                        }
-                    }else
-                    {
-                        Toast.makeText(this@MainActivity, "No Data Found", Toast.LENGTH_LONG).show()
-                    }
-                }else
-                {
-                    Toast.makeText(this@MainActivity, "No Response", Toast.LENGTH_LONG).show()
-                }
-            }
-        })
-
-    }
-
-    private fun setAdapter(userDataList: ArrayList<Users>) {
-        userDataRecyclerAdapter = UserDataRecyclerAdapter(this, userDataList)
-        if(currentPage!= PAGE_START){
-            userDataRecyclerAdapter!!.removeLoading()
-        }
-        userDataRecyclerAdapter!!.addItems(userDataList)
-        swipeRefresh.isRefreshing = false
-
-        if (currentPage<userDataList.size){
-            userDataRecyclerAdapter!!.addLoading()
-        }else{
-            mIsLastPage = true
-        }
-        mIsLoading = false
+        userDataRecyclerAdapter!!.notifyDataSetChanged()
 
     }
 
