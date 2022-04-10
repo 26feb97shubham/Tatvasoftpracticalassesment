@@ -11,7 +11,7 @@ import com.example.tatvasoftpracticalassessment.models.Users
 import com.example.tatvasoftpracticalassessment.viewholder.UserDataViewHolder
 import kotlinx.android.synthetic.main.usersdatalistitem.view.*
 
-class PostRecyclerAdapter(private val context: Context, private val userDataList : ArrayList<Users>) :
+class UserDataRecyclerAdapter(private val context: Context, private val userDataList : ArrayList<Users>) :
     RecyclerView.Adapter<UserDataViewHolder>() {
     private var isLoaderVisible = false
     private var mUsersDataItemsList = ArrayList<Users>()
