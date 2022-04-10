@@ -19,7 +19,7 @@ class UserRepository {
     private var userDataService: UserDataService? = null
     private var userDataResponseLiveData: MutableLiveData<UserDataResponse?>? = null
 
-    fun userRepository() {
+    public fun userRepository() {
         userDataResponseLiveData = MutableLiveData<UserDataResponse?>()
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -32,7 +32,7 @@ class UserRepository {
             .create(UserDataService::class.java)
     }
 
-    fun userVolumes(offset:Int?, limit:Int?) {
+    public fun userVolumes(offset:Int?, limit:Int?) {
         userDataService!!.doGetUserList(offset, limit)!!.enqueue(object : Callback<UserDataResponse?> {
                 override fun onResponse(
                     call: Call<UserDataResponse?>?,
@@ -49,7 +49,7 @@ class UserRepository {
             })
     }
 
-    fun getVolumesResponseLiveData(): LiveData<UserDataResponse?>? {
+    public fun getVolumesResponseLiveData(): LiveData<UserDataResponse?>? {
         return userDataResponseLiveData
     }
 
