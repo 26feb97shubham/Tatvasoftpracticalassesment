@@ -86,10 +86,27 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun setAdapter(userDataList: ArrayList<Users>) {
-        userDataRecyclerAdapter = UserDataRecyclerAdapter(this, userDataList        )
+        userDataRecyclerAdapter = UserDataRecyclerAdapter(this, userDataList)
+        if(currentPage!= PAGE_START){
+            userDataRecyclerAdapter!!.removeLoading()
+        }
+        userDataRecyclerAdapter!!.addItems(userDataList)
+        swipeRefresh.isRefreshing = false
+
+        if (currentPage<userDataList.size){
+            userDataRecyclerAdapter!!.addLoading()
+        }else{
+            mIsLastPage = true
+        }
+        mIsLoading = false
+
     }
 
     override fun onRefresh() {
-
+        itemCount = 0;
+        currentPage = PAGE_START;
+        mIsLastPage = false;
+        userDataRecyclerAdapter!!.clear()
+        doAPICall()
     }
 }

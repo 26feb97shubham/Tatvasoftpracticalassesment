@@ -15,6 +15,8 @@ class UserDataRecyclerAdapter(private val context: Context, private val userData
     RecyclerView.Adapter<UserDataViewHolder>() {
     private var isLoaderVisible = false
     private var mUsersDataItemsList = ArrayList<Users>()
+    private var mUserDataImages = ArrayList<String>()
+    private var mUserImagesAdapter : UserImagesAdapter?=null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserDataViewHolder {
         return when (viewType) {
             VIEW_TYPE_NORMAL -> ViewHolder(
@@ -46,7 +48,7 @@ class UserDataRecyclerAdapter(private val context: Context, private val userData
     }
 
     fun addItems(userItems: List<Users>?) {
-        mUsersDataItemsList!!.addAll(userDataList!!)
+        mUsersDataItemsList!!.addAll(userItems!!)
         notifyDataSetChanged()
     }
 
@@ -81,6 +83,18 @@ class UserDataRecyclerAdapter(private val context: Context, private val userData
             super.onBind(position)
             val item: Users = mUsersDataItemsList!![position]
             Glide.with(context).load(item.image).into(itemView!!.userImage)
+            if (item.items.size==0){
+                itemView.userDataImageItem.visibility = View.GONE
+                itemView.userDataImagesRecyclerView.visibility = View.GONE
+            }else if (item.items.size==1){
+                itemView.userDataImageItem.visibility = View.VISIBLE
+                itemView.userDataImagesRecyclerView.visibility = View.GONE
+                Glide.with(context).load(item.items[0]).into(itemView.userDataImageItem)
+            }else{
+                for (i in 1 until item!!.items.size){
+                    mUserDataImages.add(item.items[i])
+                }
+            }
         }
     }
 
